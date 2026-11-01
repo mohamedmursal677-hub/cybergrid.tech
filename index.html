@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="0y_oduvby6oG6eX7zVPORHV05bXAGMIY5Kzi7wYdRV8" />
-    <title>Cybergrid Tech</title>
+    <title>Cybergrid Tech - Connect 4</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,8 @@
             --primary-hover: #2563eb;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
-            --accent-glow: rgba(59, 130, 246, 0.15);
+            --p1-color: #ef4444; /* Red / Neon Pink */
+            --p2-color: #eab308; /* Yellow */
         }
 
         body {
@@ -29,7 +30,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            line-height: 1.6;
+            align-items: center;
         }
 
         header {
@@ -82,104 +83,131 @@
             color: var(--text-main);
         }
 
-        .hero {
-            flex: 1;
+        .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 4rem 1.5rem 6rem;
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
+            padding: 2rem 1rem;
+            max-width: 600px;
+            width: 100%;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .badge {
-            background-color: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #60a5fa;
-            padding: 0.35rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-        }
-
-        .headline {
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 1.2rem;
+        h1.game-title {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
             background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-align: center;
         }
 
-        .subheadline {
-            font-size: 1.15rem;
+        .status-bar {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
             color: var(--text-muted);
-            max-width: 650px;
-            margin-bottom: 2.5rem;
+            text-align: center;
         }
 
-        .cta-group {
+        .status-bar span {
+            color: var(--text-main);
+        }
+
+        .controls {
             display: flex;
             gap: 1rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        .btn-primary {
+        button.btn {
             background-color: var(--primary);
             color: #ffffff;
-            padding: 0.8rem 1.8rem;
-            border-radius: 8px;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
             font-weight: 600;
-            text-decoration: none;
-            transition: background-color 0.2s ease, transform 0.1s ease;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .btn-primary:hover {
+        button.btn:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-2px);
         }
 
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--text-main);
-            border: 1px solid #374151;
-            padding: 0.8rem 1.8rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .btn-secondary:hover {
+        button.btn-secondary {
             background-color: #1f2937;
-            border-color: #4b5563;
+            border: 1px solid #374151;
         }
 
-        @media (max-width: 640px) {
-            .headline { font-size: 2.2rem; }
-            .subheadline { font-size: 1rem; }
-            .cta-group { flex-direction: column; width: 100%; }
-            .btn-primary, .btn-secondary { width: 100%; }
+        button.btn-secondary:hover {
+            background-color: #374151;
+        }
+
+        /* Connect 4 Board Styling */
+        .board {
+            background-color: #1e3a8a;
+            padding: 12px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 4px solid #3b82f6;
+        }
+
+        .cell {
+            width: 45px;
+            height: 45px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.6);
+            transition: background-color 0.15s;
+        }
+
+        .cell:hover {
+            background-color: #161e2e;
+        }
+
+        .disc {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateY(-300px);
+            animation: dropDisc 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .disc.p1 {
+            background: radial-gradient(circle at 30% 30%, #f87171, #dc2626);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+
+        .disc.p2 {
+            background: radial-gradient(circle at 30% 30%, #facc15, #ca8a04);
+            box-shadow: 0 0 10px rgba(202, 138, 4, 0.5);
+        }
+
+        @keyframes dropDisc {
+            0% { transform: translateY(-300px); }
+            100% { transform: translateY(0); }
+        }
+
+        @media (max-width: 500px) {
+            .cell {
+                width: 38px;
+                height: 38px;
+            }
+            .board {
+                gap: 6px;
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -191,23 +219,186 @@
             <span>Cybergrid</span>
         </a>
         <ul class="nav-links">
+            <li><a href="#">Home</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </header>
 
-    <main class="hero">
-        <span class="badge">🚀 Next-Gen Digital Solutions</span>
-        <h1 class="headline">Building the Future of Cybersecurity & Infrastructure</h1>
-        <p class="subheadline">
-            Empowering modern teams with robust cloud security, scalable grid architecture, and automated threat defense.
-        </p>
-        <div class="cta-group">
-            <a href="#get-started" class="btn-primary">Get Started</a>
-            <a href="#learn-more" class="btn-secondary">Learn More</a>
+    <div class="game-container">
+        <h1 class="game-title">Connect 4</h1>
+        <div class="status-bar" id="status">Current Turn: <span id="turn-indicator" style="color: var(--p1-color);">Player 1 (Red)</span></div>
+        
+        <div class="controls">
+            <button class="btn" onclick="resetGame()">Restart Game</button>
+            <button class="btn btn-secondary" id="mode-btn" onclick="toggleMode()">Mode: 2 Player</button>
         </div>
-    </main>
 
+        <div class="board" id="board"></div>
+    </div>
+
+    <script>
+        const ROWS = 6;
+        const COLS = 7;
+        let board = [];
+        let currentPlayer = 1; // 1 for Red, 2 for Yellow
+        let isGameOver = false;
+        let vsAI = false;
+
+        const boardElement = document.getElementById('board');
+        const statusElement = document.getElementById('status');
+        const modeBtn = document.getElementById('mode-btn');
+
+        function initGame() {
+            board = Array(ROWS).fill(null).map(() => Array(COLS).fill(0));
+            isGameOver = false;
+            currentPlayer = 1;
+            updateStatus();
+            renderBoard();
+        }
+
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.col = c;
+                    cell.addEventListener('click', () => handleColumnClick(c));
+
+                    if (board[r][c] !== 0) {
+                        const disc = document.createElement('div');
+                        disc.classList.add('disc', board[r][c] === 1 ? 'p1' : 'p2');
+                        cell.appendChild(disc);
+                    }
+
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        function handleColumnClick(col) {
+            if (isGameOver) return;
+            if (vsAI && currentPlayer === 2) return; // Prevent clicking during AI turn
+
+            if (dropToken(col)) {
+                if (checkWin()) {
+                    isGameOver = true;
+                    statusElement.innerHTML = `<span style="color: ${currentPlayer === 1 ? 'var(--p1-color)' : 'var(--p2-color)'}">Player ${currentPlayer} Wins! 🎉</span>`;
+                    return;
+                }
+                if (checkTie()) {
+                    isGameOver = true;
+                    statusElement.innerHTML = `<span>It's a Tie! 🤝</span>`;
+                    return;
+                }
+
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                updateStatus();
+
+                if (vsAI && currentPlayer === 2 && !isGameOver) {
+                    setTimeout(makeAIMove, 400);
+                }
+            }
+        }
+
+        function dropToken(col) {
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (board[r][col] === 0) {
+                    board[r][col] = currentPlayer;
+                    renderBoard();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function makeAIMove() {
+            if (isGameOver) return;
+            let availableCols = [];
+            for (let c = 0; c < COLS; c++) {
+                if (board[0][c] === 0) availableCols.push(c);
+            }
+            if (availableCols.length === 0) return;
+
+            // Simple smart AI: pick winning or blocking move, else random
+            let col = availableCols[Math.floor(Math.random() * availableCols.length)];
+            
+            for (let c of availableCols) {
+                // Try to win
+                let r = getDropRow(c);
+                board[r][c] = 2;
+                if (checkWin()) {
+                    board[r][c] = 0;
+                    col = c;
+                    break;
+                }
+                board[r][c] = 0;
+
+                // Try to block Player 1
+                board[r][c] = 1;
+                if (checkWin()) {
+                    board[r][c] = 0;
+                    col = c;
+                    break;
+                }
+                board[r][c] = 0;
+            }
+
+            // Drop AI token
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (board[r][col] === 0) {
+                    board[r][col] = 2;
+                    break;
+                }
+            }
+
+            renderBoard();
+
+            if (checkWin()) {
+                isGameOver = true;
+                statusElement.innerHTML = `<span style="color: var(--p2-color)">AI Wins! 🤖</span>`;
+                return;
+            }
+            if (checkTie()) {
+                isGameOver = true;
+                statusElement.innerHTML = `<span>It's a Tie! 🤝</span>`;
+                return;
+            }
+
+            currentPlayer = 1;
+            updateStatus();
+        }
+
+        function getDropRow(col) {
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (board[r][col] === 0) return r;
+            }
+            return -1;
+        }
+
+        function updateStatus() {
+            if (vsAI && currentPlayer === 2) {
+                statusElement.innerHTML = `Current Turn: <span style="color: var(--p2-color);">AI Thinking...</span>`;
+            } else {
+                const colorStyle = currentPlayer === 1 ? 'var(--p1-color)' : 'var(--p2-color)';
+                const name = currentPlayer === 1 ? 'Player 1 (Red)' : (vsAI ? 'AI (Yellow)' : 'Player 2 (Yellow)');
+                statusElement.innerHTML = `Current Turn: <span style="color: ${colorStyle};">${name}</span>`;
+            }
+        }
+
+        function toggleMode() {
+            vsAI = !vsAI;
+            modeBtn.textContent = vsAI ? "Mode: vs AI" : "Mode: 2 Player";
+            resetGame();
+        }
+
+        function resetGame() {
+            initGame();
+        }
+
+        // Start game on load
+        initGame();
+    </script>
 </body>
 </html>
