@@ -20,8 +20,8 @@
             --primary-hover: #2563eb;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
-            --p1-color: #ef4444; /* Red / Neon Pink */
-            --p2-color: #eab308; /* Yellow */
+            --p1-color: #ef4444;
+            --p2-color: #eab308;
         }
 
         body {
@@ -145,7 +145,7 @@
             background-color: #374151;
         }
 
-        /* Connect 4 Board Styling */
+        /* Board Styling */
         .board {
             background-color: #1e3a8a;
             padding: 12px;
@@ -166,7 +166,6 @@
             position: relative;
             overflow: hidden;
             box-shadow: inset 0 4px 6px rgba(0,0,0,0.6);
-            transition: background-color 0.15s;
         }
 
         .cell:hover {
@@ -180,7 +179,6 @@
             position: absolute;
             top: 0;
             left: 0;
-            transform: translateY(-300px);
             animation: dropDisc 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
@@ -200,14 +198,8 @@
         }
 
         @media (max-width: 500px) {
-            .cell {
-                width: 38px;
-                height: 38px;
-            }
-            .board {
-                gap: 6px;
-                padding: 8px;
-            }
+            .cell { width: 38px; height: 38px; }
+            .board { gap: 6px; padding: 8px; }
         }
     </style>
 </head>
@@ -220,8 +212,6 @@
         </a>
         <ul class="nav-links">
             <li><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
         </ul>
     </header>
 
@@ -241,7 +231,7 @@
         const ROWS = 6;
         const COLS = 7;
         let board = [];
-        let currentPlayer = 1; // 1 for Red, 2 for Yellow
+        let currentPlayer = 1;
         let isGameOver = false;
         let vsAI = false;
 
@@ -279,7 +269,7 @@
 
         function handleColumnClick(col) {
             if (isGameOver) return;
-            if (vsAI && currentPlayer === 2) return; // Prevent clicking during AI turn
+            if (vsAI && currentPlayer === 2) return;
 
             if (dropToken(col)) {
                 if (checkWin()) {
@@ -321,11 +311,9 @@
             }
             if (availableCols.length === 0) return;
 
-            // Simple smart AI: pick winning or blocking move, else random
             let col = availableCols[Math.floor(Math.random() * availableCols.length)];
             
             for (let c of availableCols) {
-                // Try to win
                 let r = getDropRow(c);
                 board[r][c] = 2;
                 if (checkWin()) {
@@ -335,7 +323,6 @@
                 }
                 board[r][c] = 0;
 
-                // Try to block Player 1
                 board[r][c] = 1;
                 if (checkWin()) {
                     board[r][c] = 0;
@@ -345,7 +332,6 @@
                 board[r][c] = 0;
             }
 
-            // Drop AI token
             for (let r = ROWS - 1; r >= 0; r--) {
                 if (board[r][col] === 0) {
                     board[r][col] = 2;
@@ -377,6 +363,42 @@
             return -1;
         }
 
+        function checkWin() {
+            // Horizontal check
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS - 3; c++) {
+                    let val = board[r][c];
+                    if (val !== 0 && val === board[r][c+1] && val === board[r][c+2] && val === board[r][c+3]) return true;
+                }
+            }
+            // Vertical check
+            for (let r = 0; r < ROWS - 3; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    let val = board[r][c];
+                    if (val !== 0 && val === board[r+1][c] && val === board[r+2][c] && val === board[r+3][c]) return true;
+                }
+            }
+            // Diagonal (bottom-left to top-right)
+            for (let r = 3; r < ROWS; r++) {
+                for (let c = 0; c < COLS - 3; c++) {
+                    let val = board[r][c];
+                    if (val !== 0 && val === board[r-1][c+1] && val === board[r-2][c+2] && val === board[r-3][c+3]) return true;
+                }
+            }
+            // Diagonal (top-left to bottom-right)
+            for (let r = 0; r < ROWS - 3; r++) {
+                for (let c = 0; c < COLS - 3; c++) {
+                    let val = board[r][c];
+                    if (val !== 0 && val === board[r+1][c+1] && val === board[r+2][c+2] && val === board[r+3][c+3]) return true;
+                }
+            }
+            return false;
+        }
+
+        function checkTie() {
+            return board[0].every(cell => cell !== 0);
+        }
+
         function updateStatus() {
             if (vsAI && currentPlayer === 2) {
                 statusElement.innerHTML = `Current Turn: <span style="color: var(--p2-color);">AI Thinking...</span>`;
@@ -397,7 +419,6 @@
             initGame();
         }
 
-        // Start game on load
         initGame();
     </script>
 </body>
